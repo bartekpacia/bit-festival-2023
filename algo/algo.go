@@ -41,7 +41,7 @@ func CalcTemp(I_obl, temp float64) (float64, error) {
 	// load csv and read tolerance for temp
 
 	// start from 1 to skip first column
-	for i := 1; i < len(YDYtolerance)-1; i++ {
+	for i := 1; i < len(YDYtolerance); i++ {
 		fmt.Println("checking row", i)
 		thisRow := YDYtolerance[i]
 		// nextRow := YDYtolerance[i+1]
