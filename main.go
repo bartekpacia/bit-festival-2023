@@ -21,4 +21,8 @@ func main() {
 		log.Fatalln(err)
 	}
 	fmt.Println("I_ost:", I_ost)
+
+	I_ost = 55
+
+	algo.MatchCrossection(I_ost, 2, algo.A1)
 }
