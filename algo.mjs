@@ -12,7 +12,7 @@ console.log('test')
 
 function calc(I_obl, Temp) /* returns I_ost */ {
   const I_ost = I_obl / (Temp * 0.85)
-  return I_ost
+  return I_ost  
 }
 
 export { calc }
