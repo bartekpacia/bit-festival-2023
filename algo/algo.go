@@ -82,9 +82,9 @@ type CableLocation string
 
 const (
 	// przewód wielożyłowy bezpośrednio w ścianie izolowanej cieplnie
-	A1 CableLocation = "A2"
+	A1 CableLocation = "A1"
 	// przewód wielożyłowy w rurze instalacyjnej w ścianie izolowanej cieplnie
-	A2 CableLocation = "A3"
+	A2 CableLocation = "A2"
 	// przewód  w rurze instalacyjnej/listwie naściennej na ścianie murowanej
 	// lub drewnianej
 	B2 CableLocation = "B2"
@@ -105,7 +105,7 @@ func MatchCrossection(I_ost float64, zyly int, gdzie CableLocation) (float64, er
 		parts := strings.Split(YDY_przekroj[0][columnIndex], " ")
 		liczbaZyl, _ := strconv.Atoi(parts[1])
 		lokalizacja := parts[2]
-
+		fmt.Println("lokalizacja:", lokalizacja)
 		if zyly == liczbaZyl && gdzie == CableLocation(lokalizacja) {
 			fmt.Printf("wybrałem kolumnę z liczbą żył %d i lokalizacją %s\n", zyly, gdzie)
 			break
@@ -113,13 +113,16 @@ func MatchCrossection(I_ost float64, zyly int, gdzie CableLocation) (float64, er
 	}
 
 	// start from 1 to skip first row
-	for i := 1; i < len(YDY_przekroj[columnIndex]); i++ {
+	for i := 1; i < len(YDY_przekroj); i++ {
 		thisRow := YDY_przekroj[i]
 		fmt.Println("thisRow:", thisRow)
 		thisNatezenie, _ := strconv.ParseFloat(thisRow[columnIndex], 64)
 		nextCrossection, _ := strconv.ParseFloat(thisRow[0], 64)
+		fmt.Println("i:", i, "thisNatezenie:", thisNatezenie, "nextCrossection:", nextCrossection)
 		if thisNatezenie > I_ost {
 			return nextCrossection, nil
+		} else {
+			fmt.Println("thisNatezenie <= I_ost", thisNatezenie, "<=", I_ost)
 		}
 	}
 
