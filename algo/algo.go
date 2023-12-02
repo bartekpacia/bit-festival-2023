@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 )
 
 var (
@@ -12,43 +13,63 @@ var (
 	ErrNotFound       = fmt.Errorf("not found")
 )
 
-var YDYtolerance [][]string
+var (
+	LoadPath      string
+	YDY_tolerance [][]string
+	YDY_przekroj  [][]string
+)
 
 // Init loads data needed for the algorithm to work.
 func Init() error {
-	file, err := os.Open("tolerance_data.csv")
-	if err != nil {
-		return fmt.Errorf("failed to load tolerance csv file: %w", err)
-	}
-	defer file.Close()
+	{
+		file, err := os.Open(fmt.Sprintf("%stolerance_data.csv", LoadPath))
+		if err != nil {
+			return fmt.Errorf("failed to load tolerance csv file: %w", err)
+		}
+		defer file.Close()
 
-	// read csv values using csv.Reader
-	csvReader := csv.NewReader(file)
-	YDYtolerance, err = csvReader.ReadAll()
-	if err != nil {
-		return fmt.Errorf("failed to read from file into csv: %w", err)
+		// read csv values using csv.Reader
+		csvReader := csv.NewReader(file)
+		YDY_tolerance, err = csvReader.ReadAll()
+		if err != nil {
+			return fmt.Errorf("failed to read from file into csv: %w", err)
+		}
+	}
+
+	{
+		file, err := os.Open(fmt.Sprintf("%sYDY_przekroj.csv", LoadPath))
+		if err != nil {
+			return fmt.Errorf("failed to load przekroj csv file: %w", err)
+		}
+		defer file.Close()
+
+		// read csv values using csv.Reader
+		csvReader := csv.NewReader(file)
+		YDY_przekroj, err = csvReader.ReadAll()
+		if err != nil {
+			return fmt.Errorf("failed to read from file into csv: %w", err)
+		}
 	}
 
 	return nil
 }
 
-// / CalcTemp returns I_ost for given I_obl and temp.
+func Calc(I_obl, tolerance float64) (I_ost float64) {
+	I_ost = I_obl / (tolerance * 0.85)
+	return
+}
+
+// CalcTemp returns I_ost for given I_obl and temp.
 func CalcTemp(I_obl, temp float64) (float64, error) {
-	if YDYtolerance == nil {
+	if YDY_tolerance == nil {
 		panic(ErrNotInitialized)
 	}
 
-	// load csv and read tolerance for temp
-
 	// start from 1 to skip first column
-	for i := 1; i < len(YDYtolerance); i++ {
-		fmt.Println("checking row", i)
-		thisRow := YDYtolerance[i]
-		// nextRow := YDYtolerance[i+1]
-		// parse int
+	for i := 1; i < len(YDY_tolerance); i++ {
+		thisRow := YDY_tolerance[i]
 		thisTemp, _ := strconv.ParseFloat(thisRow[0], 64)
 		nextTolerance, _ := strconv.ParseFloat(thisRow[1], 64)
-		fmt.Println("nextTolerance: ", nextTolerance, "thisTemp: ", thisTemp)
 		if thisTemp > temp {
 			return Calc(I_obl, nextTolerance), nil
 		}
@@ -57,7 +78,53 @@ func CalcTemp(I_obl, temp float64) (float64, error) {
 	return 0, ErrNotFound
 }
 
-func Calc(I_obl, tolerance float64) (I_ost float64) {
-	I_ost = I_obl / (tolerance * 0.85)
-	return
+type CableLocation string
+
+const (
+	// przewód wielożyłowy bezpośrednio w ścianie izolowanej cieplnie
+	A1 CableLocation = "A1"
+	// przewód wielożyłowy w rurze instalacyjnej w ścianie izolowanej cieplnie
+	A2 CableLocation = "A2"
+	// przewód  w rurze instalacyjnej/listwie naściennej na ścianie murowanej
+	// lub drewnianej
+	B2 CableLocation = "B2"
+	// przewód wielożyłowy w powietrzu (korytko perforowane, siatkowe)
+	E CableLocation = "E2"
+)
+
+// MatchCrossection zwraca przekrój przewodu dla podanego I_ost, zyly i gdzie.
+// I_ost = ostateczny prąd obciążenia
+func MatchCrossection(I_ost float64, zyly int, gdzie CableLocation) (float64, error) {
+	if YDY_przekroj == nil {
+		panic(ErrNotInitialized)
+	}
+
+	// find column to consider basing on zyly and gdzie
+	columnIndex := 1
+	for ; columnIndex < len(YDY_przekroj[0]); columnIndex++ {
+		parts := strings.Split(YDY_przekroj[0][columnIndex], " ")
+		liczbaZyl, _ := strconv.Atoi(parts[1])
+		lokalizacja := parts[2]
+		fmt.Println("lokalizacja:", lokalizacja)
+		if zyly == liczbaZyl && gdzie == CableLocation(lokalizacja) {
+			fmt.Printf("wybrałem kolumnę z liczbą żył %d i lokalizacją %s\n", zyly, gdzie)
+			break
+		}
+	}
+
+	// start from 1 to skip first row
+	for i := 1; i < len(YDY_przekroj); i++ {
+		thisRow := YDY_przekroj[i]
+		fmt.Println("thisRow:", thisRow)
+		thisNatezenie, _ := strconv.ParseFloat(thisRow[columnIndex], 64)
+		nextCrossection, _ := strconv.ParseFloat(thisRow[0], 64)
+		fmt.Println("i:", i, "thisNatezenie:", thisNatezenie, "nextCrossection:", nextCrossection)
+		if thisNatezenie > I_ost {
+			return nextCrossection, nil
+		} else {
+			fmt.Println("thisNatezenie <= I_ost", thisNatezenie, "<=", I_ost)
+		}
+	}
+
+	return 0, ErrNotFound
 }
