@@ -1,19 +1,14 @@
 <script>
 	import "./styles.css";
+	import Header from "$lib/components/Header.svelte";
 </script>
 
 <div class="app">
-	<header>HEADER</header>
+	<Header />
 
 	<main>
 		<slot />
 	</main>
-
-	<footer>
-		<p>
-			visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to learn SvelteKit
-		</p>
-	</footer>
 </div>
 
 <style>
@@ -21,5 +16,12 @@
 		display: flex;
 		flex-direction: column;
 		min-height: 100vh;
+	}
+
+	main {
+		display: flex;
+		width: 100%;
+		flex-grow: 1;
+		align-items: center;
 	}
 </style>
