@@ -14,6 +14,7 @@ var (
 )
 
 var (
+	LoadPath      string
 	YDY_tolerance [][]string
 	YDY_przekroj  [][]string
 )
@@ -21,7 +22,7 @@ var (
 // Init loads data needed for the algorithm to work.
 func Init() error {
 	{
-		file, err := os.Open("algo/tolerance_data.csv")
+		file, err := os.Open(fmt.Sprintf("%stolerance_data.csv", LoadPath))
 		if err != nil {
 			return fmt.Errorf("failed to load tolerance csv file: %w", err)
 		}
@@ -36,7 +37,7 @@ func Init() error {
 	}
 
 	{
-		file, err := os.Open("algo/YDY_przekroj.csv")
+		file, err := os.Open(fmt.Sprintf("%sYDY_przekroj.csv", LoadPath))
 		if err != nil {
 			return fmt.Errorf("failed to load przekroj csv file: %w", err)
 		}
@@ -93,7 +94,7 @@ const (
 
 // MatchCrossection zwraca przekrój przewodu dla podanego I_ost, zyly i gdzie.
 // I_ost = ostateczny prąd obciążenia
-func MatchCrossection(I_ost float64, zyly int, gdzie CableLocation) {
+func MatchCrossection(I_ost float64, zyly int, gdzie CableLocation) (float64, error) {
 	if YDY_przekroj == nil {
 		panic(ErrNotInitialized)
 	}
@@ -118,8 +119,9 @@ func MatchCrossection(I_ost float64, zyly int, gdzie CableLocation) {
 		thisNatezenie, _ := strconv.ParseFloat(thisRow[columnIndex], 64)
 		nextCrossection, _ := strconv.ParseFloat(thisRow[0], 64)
 		if thisNatezenie > I_ost {
-			fmt.Printf("przekrój to %f mm^2\n", nextCrossection)
-			return
+			return nextCrossection, nil
 		}
 	}
+
+	return 0, ErrNotFound
 }

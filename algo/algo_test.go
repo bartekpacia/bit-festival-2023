@@ -69,3 +69,18 @@ func TestCalcTemp_3(t *testing.T) {
 		t.Errorf("CalcTemp(%f, %f) = %f; want %f", I_obl, temp, got_I_ost, want_I_ost)
 	}
 }
+
+func TestMatchCrossection_1(t *testing.T) {
+	I_ost := 22.53 // A (prąd obciążenia)
+	zyly := 2      // liczba przewodów
+	location := algo.A1
+	got, err := algo.MatchCrossection(I_ost, zyly, location)
+	if err != nil {
+		t.Error("unexpected error:", err)
+	}
+
+	want := 4.0 // mm2 (przekrój przewodu)
+	if !almostEqual(got, want) {
+		t.Errorf("MatchCrossection(%f, %d, %s) = %f; want %f", I_ost, zyly, location, got, want)
+	}
+}

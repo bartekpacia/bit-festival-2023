@@ -8,6 +8,7 @@ import (
 )
 
 func main() {
+	algo.LoadPath = "algo/"
 	err := algo.Init()
 	if err != nil {
 		log.Fatalln(err)
@@ -22,7 +23,10 @@ func main() {
 	}
 	fmt.Println("I_ost:", I_ost)
 
-	I_ost = 55
+	przekroj, err := algo.MatchCrossection(I_ost, 2, algo.A1)
+	if err != nil {
+		log.Fatalln("failed to match crossection:", err)
+	}
 
-	algo.MatchCrossection(I_ost, 2, algo.A1)
+	fmt.Println("przekroj:", przekroj)
 }
