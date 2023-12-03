@@ -9,27 +9,27 @@
         <h1>Results:</h1>
     </div>
     <div class="row">
-        <span>cableType:</span>
+        <span>Cable type:</span>
         <span>{result.cableType}</span>
     </div>
     <div class="row">
-        <span>veinsNumber:</span>
+        <span>Veins number:</span>
         <span>{result.veinsNumber}</span>
     </div>
     <div class="row">
-        <span>crossSection:</span>
+        <span>Cross-section:</span>
         <span>{result.crossSection}</span>
     </div>
     <div class="row">
-        <span>insulationType:</span>
+        <span>Insulation type:</span>
         <span>{result.insulationType}</span>
     </div>
     <div class="row">
-        <span>placements:</span>
+        <span>Placements:</span>
         <span>{result.placements}</span>
     </div>
     <div class="row">
-        <span>temperature:</span>
+        <span>Temperature:</span>
         <span>{result.temperature}</span>
     </div>
     <div class="row link">
