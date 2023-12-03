@@ -18,7 +18,6 @@
 
 	let mediaRecorder: MediaRecorder | null = null;
 	let chunks: Blob[] = [];
-	let downloadHref = "";
 	let assistantState: AssistantState = AssistantState.ReadyForInput;
 	let ampacityOrMaxPower = AmpacityOrMaxPower.Ampacity;
 	let assistantBtnColor: string;
@@ -118,11 +117,15 @@
 	}
 
 	async function calculate() {
+		const a =
+			ampacityOrMaxPower === AmpacityOrMaxPower.Ampacity ? ampacity : 0;
+		const m =
+			ampacityOrMaxPower === AmpacityOrMaxPower.MaxPower ? maxPower : 0;
 		const r = await fetch("http://127.0.0.1:8080", {
 			method: "POST",
 			body: JSON.stringify({
-				ampacity,
-				maxPower,
+				ampacity: a,
+				maxPower: m,
 				veinsUnderLoad,
 				placements,
 				temperature,
@@ -267,8 +270,8 @@
 	}
 
 	form {
-		width: 100%;
-		padding: 0 10vw;
+		width: 80vw;
+		max-width: 800px;
 	}
 
 	label {
