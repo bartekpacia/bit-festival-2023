@@ -1,0 +1,11 @@
+{
+    "short_name": "bf23",
+    "name": "bit-festival-2023",
+    "start_url": "/",
+    "icons": [],
+    "background-color": "#000000",
+    "display": "standalone",
+    "scope": "/",
+    "theme_color": "#000000",
+    "description": "The best app in the world"
+}
