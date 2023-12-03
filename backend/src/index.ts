@@ -78,18 +78,16 @@ app.post("/speach-to-json", upload.single('file'), async (req, res) => {
     console.log(file)
     try {
         if (file && file.buffer) {
-            const transText = await transcriber(file.buffer)
-
-            let prompt = fs.readFileSync("./jsonGenerationInput.txt", 'utf-8');
-            prompt = prompt.replace("%generated_text%", transText)
-
-            console.log("transcribed prompt:\n\n", prompt)
+            const prompt = await transcriber(file.buffer)
+            const system = fs.readFileSync("./jsonGenerationInput.txt", 'utf-8');
+            console.log("transcribed prompt: " + prompt)
 
             const requestBodyData = JSON.stringify({
-                "model": "llama2",
-                "prompt": prompt,
-                "format": "json",
-                "stream": false
+                model: "llama2",
+                format: "json",
+                stream: false,
+                prompt,
+                system
             })
 
             const options: http.RequestOptions = {

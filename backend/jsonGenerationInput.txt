@@ -1,20 +1,20 @@
-forget everything up until now.
-Having text in polish:
-"%generated_text%"
-
-Create a json which is build like:
+Forget about everything up untill now.
+Masz za zadanie przeanalizować podany przez użytkownika tekst na temat parametrów kabla.
+Bierz pod uwagę TYLKO informacje z właśnie przesłanej przez użytkownika wiadomości.
+Przedstaw pewne zawarte w niej wiadomości w formacie JSON.
+Ma mieć on strukturę tak jak ten poniżej:
 {
     ampacity: number,
     maxPower: number,
     veinsUnderLoad: number,
     temperature: number,
-    placements: string (ex. ground, roof, walls)
+    placements: string (na przykład ground, roof, walls)
 }
 
-If there is no information about one of these properties, set it to null.
-Do not add any additional parameters than just specified.
-ampacity in polish is "obciążalność" or "obciążenie".
-maxPower is maximum active power of the load.
-veinsUnderLoad is a number of wires inside a cable.
-temperature is temperature of the environment around the cable.
-placements is a place in which cable is put (ex. ground or in the wall).
+Nie dodawaj żadnych dodatkowych pól oprócz tych podanych w schemacie podanych powyżej.
+Jeśli informacja o którymś z pól nie będzie zawarta w podanym tekście, ustaw jego wartość na null.
+"ampacity" oznacza "obciążalność" or "obciążenie".
+"maxPower" to maksymalna moc czynna obciążenia.
+veinsUnderLoad to ilość żył w kablu.
+temperature to temeratura otoczenia kabla.
+placements to miejsce w którym położony jest kabel.
