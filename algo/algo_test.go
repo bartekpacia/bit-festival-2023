@@ -40,7 +40,7 @@ func TestCalc_1(t *testing.T) {
 func TestCalcTemp_1(t *testing.T) {
 	I_obl := 18.0 // A (maksymalne obciążenie prądowe kabla)
 	temp := 5.0   // °C (temperatura otoczenia)
-	got_I_ost, _ := algo.CalcTemp(I_obl, temp)
+	got_I_ost, _ := algo.CalcTemp(I_obl, temp, 3)
 
 	want_I_ost := 17.3578 // tyle wyszło z obliczeń ręcznych
 	if !almostEqual(got_I_ost, want_I_ost) {
@@ -51,7 +51,7 @@ func TestCalcTemp_1(t *testing.T) {
 func TestCalcTemp_2(t *testing.T) {
 	I_obl := 18.0 // A (maksymalne obciążenie prądowe kabla)
 	temp := 27.0  // °C (temperatura otoczenia)
-	got_I_ost, _ := algo.CalcTemp(I_obl, temp)
+	got_I_ost, _ := algo.CalcTemp(I_obl, temp, 3)
 
 	want_I_ost := 21.1765 // tyle wyszło z obliczeń ręcznych
 	if !almostEqual(got_I_ost, want_I_ost) {
@@ -62,7 +62,7 @@ func TestCalcTemp_2(t *testing.T) {
 func TestCalcTemp_3(t *testing.T) {
 	I_obl := 18.0 // A (maksymalne obciążenie prądowe kabla)
 	temp := 57.0  // °C (temperatura otoczenia)
-	got_I_ost, _ := algo.CalcTemp(I_obl, temp)
+	got_I_ost, _ := algo.CalcTemp(I_obl, temp, 3)
 
 	want_I_ost := 42.3529 // tyle wyszło z obliczeń ręcznych
 	if !almostEqual(got_I_ost, want_I_ost) {

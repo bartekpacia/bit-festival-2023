@@ -60,9 +60,28 @@ func Calc(I_obl, tolerance float64) (I_ost float64) {
 }
 
 // CalcTemp returns I_ost for given I_obl and temp.
-func CalcTemp(I_obl, temp float64) (float64, error) {
+func CalcTemp(I_obl, temp float64, zyly int) (float64, error) {
 	if YDY_tolerance == nil {
 		panic(ErrNotInitialized)
+	}
+
+	// find to which cable we should match
+	przypadek := 1
+	if zyly == 3 {
+		zyly = 2
+		przypadek = 1 //jako przypadek wielożyłowego kabla
+	} else if zyly == 4 || zyly == 5 {
+		zyly = 3
+		przypadek = 1 //jako przypadek wielożyłowego kabla
+	} else if zyly == 1 {
+		zyly = 3
+		przypadek = 2 //jako przypadek jednożyłowego kabla
+	}
+
+	if przypadek == 1 {
+		//przeskanuj i wyświetl wynik tylko dla kabli YDY, YDYp, YKY,
+	} else if przypadek == 2 {
+		//przeskanuj i wyświetl wynik tylko dla kabli YKY, YKXS, YAKXS, N2XH
 	}
 
 	// start from 1 to skip first column
