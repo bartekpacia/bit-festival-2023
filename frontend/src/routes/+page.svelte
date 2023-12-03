@@ -1,6 +1,8 @@
 <script lang="ts">
 	import mic from "$lib/icons/mic.svg";
-	import calculate from "$lib/icons/calculate.svg";
+	import calculateIcon from "$lib/icons/calculate.svg";
+	import { Placements, type GoRsp } from "$lib/scripts/goBackend";
+	import DisplayResult from "$lib/components/DisplayResult.svelte";
 
 	enum AssistantState {
 		ReadyForInput,
@@ -13,26 +15,19 @@
 		MaxPower,
 	}
 
-	enum Placements {
-		A1,
-		A2,
-		B2,
-		C,
-		E,
-	}
-
 	let mediaRecorder: MediaRecorder | null = null;
 	let chunks: Blob[] = [];
 	let downloadHref = "";
 	let assistantState: AssistantState = AssistantState.ReadyForInput;
 	let ampacityOrMaxPower = AmpacityOrMaxPower.Ampacity;
 	let assistantBtnColor: string;
+	let result: GoRsp | null = null;
 
-	let ampacity = 0;
+	let ampacity = 18;
 	let maxPower = 0;
-	let veinsUnderLoad = 0;
+	let veinsUnderLoad = 2;
 	let placements: Placements = Placements.A1;
-	let temperature = 0;
+	let temperature = 27;
 
 	$: if (assistantState === AssistantState.ReadyForInput) {
 		assistantBtnColor = "rgb(0, 33, 95)";
@@ -80,6 +75,20 @@
 		} else if (assistantState === AssistantState.ReadyForInput) {
 			mediaRecorder.start();
 		}
+	}
+
+	async function calculate() {
+		const r = await fetch("http://127.0.0.1:8080", {
+			method: "POST",
+			body: JSON.stringify({
+				ampacity,
+				maxPower,
+				veinsUnderLoad,
+				placements,
+				temperature,
+			}),
+		});
+		result = await r.json();
 	}
 </script>
 
@@ -153,8 +162,8 @@
 	</form>
 
 	<div class="buttons-container">
-		<button>
-			<img src={calculate} alt="calculate" />
+		<button on:click={calculate}>
+			<img src={calculateIcon} alt="calculate" />
 			<span> Calculate </span>
 		</button>
 		<button
@@ -173,6 +182,9 @@
 			</span>
 		</button>
 	</div>
+	{#if result != null}
+		<DisplayResult {result} />
+	{/if}
 </div>
 
 <style>

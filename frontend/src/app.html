@@ -8,21 +8,6 @@
 	<link rel="manifest" crossorigin="use-credentials" href="manifest.json" />
 	<meta name="description" content="Calculate your cable type!" />
 	<link rel="icon" href="%sveltekit.assets%/favicon.png" />
-	<script src="%sveltekit.assets%/wasm_exec.js"></script>
-	<script>
-		// polyfill
-		if (!WebAssembly.instantiateStreaming) {
-			WebAssembly.instantiateStreaming = async (resp, importObject) => {
-				const source = await (await resp).arrayBuffer();
-				return await WebAssembly.instantiate(source, importObject);
-			};
-		}
-		const go = new Go();
-		WebAssembly.instantiateStreaming(fetch("kable.wasm"), go.importObject)
-			.then((result) => {
-				go.run(result.instance);
-			})
-	</script>
 	%sveltekit.head%
 </head>
 
