@@ -39,7 +39,7 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 
 	var resp RespData
 
-	I_ost, err := algo.CalcTemp(req.Ampacity, req.Temperature)
+	I_ost, err := algo.CalcTemp(req.Ampacity, req.MaxPower, req.Temperature, req.VeinsUnderLoad)
 	if err != nil {
 		log.Fatalln(err)
 	}
