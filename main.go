@@ -16,8 +16,9 @@ func main() {
 
 	I_obl := 18.0 // A
 	temp := 27.0  // °C
+	P := 0.0
 	fmt.Printf("I_obl: %f A, temp: %f °C\n", I_obl, temp)
-	I_ost, err := algo.CalcTemp(I_obl, temp, 3)
+	I_ost, err := algo.CalcTemp(I_obl, P, temp, 3)
 	if err != nil {
 		log.Fatalln(err)
 	}
