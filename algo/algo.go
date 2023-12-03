@@ -3,6 +3,7 @@ package algo
 import (
 	"encoding/csv"
 	"fmt"
+	"math"
 	"os"
 	"strconv"
 	"strings"
@@ -60,11 +61,37 @@ func Calc(I_obl, tolerance float64) (I_ost float64) {
 }
 
 // CalcTemp returns I_ost for given I_obl and temp.
-func CalcTemp(I_obl, temp float64) (float64, error) {
+func CalcTemp(I_obl, P, temp float64, zyly int) (float64, error) {
 	if YDY_tolerance == nil {
 		panic(ErrNotInitialized)
 	}
 
+	// find to which cable we should match
+	przypadek := 1
+	if zyly == 3 {
+		zyly = 2
+		przypadek = 1 //jako przypadek wielożyłowego kabla
+	} else if zyly == 4 || zyly == 5 {
+		zyly = 3
+		przypadek = 1 //jako przypadek wielożyłowego kabla
+	} else if zyly == 1 {
+		zyly = 3
+		przypadek = 2 //jako przypadek jednożyłowego kabla
+	}
+
+	if przypadek == 1 {
+		//przeskanuj i wyświetl wynik tylko dla kabli YDY, YDYp, YKY,
+	} else if przypadek == 2 {
+		//przeskanuj i wyświetl wynik tylko dla kabli YKY, YKXS, YAKXS, N2XH
+	}
+
+	if P != 0.0 {
+		if zyly == 2 { //kabel 1 fazowy
+			I_obl = P * 1000 / (230 * 0.8)
+		} else if zyly == 3 { //kabel 3 fazowy
+			I_obl = P * 1000 / (math.Sqrt(3) * 400 * 0.8)
+		}
+	}
 	// start from 1 to skip first column
 	for i := 1; i < len(YDY_tolerance); i++ {
 		thisRow := YDY_tolerance[i]
@@ -97,6 +124,12 @@ const (
 func MatchCrossection(I_ost float64, zyly int, gdzie CableLocation) (float64, error) {
 	if YDY_przekroj == nil {
 		panic(ErrNotInitialized)
+	}
+
+	if zyly == 3 {
+		zyly = 2
+	} else if zyly == 4 || zyly == 5 || zyly == 1 {
+		zyly = 3
 	}
 
 	// find column to consider basing on zyly and gdzie
