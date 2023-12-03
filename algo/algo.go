@@ -116,7 +116,7 @@ const (
 	// lub drewnianej
 	B2 CableLocation = "B2"
 	// przewód wielożyłowy w powietrzu (korytko perforowane, siatkowe)
-	E CableLocation = "E2"
+	E CableLocation = "E"
 )
 
 // MatchCrossection zwraca przekrój przewodu dla podanego I_ost, zyly i gdzie.
