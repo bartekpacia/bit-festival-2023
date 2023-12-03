@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import fs from "fs"
 import multer from "multer";
+import http from "http"
 
 const app = express();
 app.use(express.json({ limit: "1024mb" }));
@@ -49,7 +50,7 @@ app.get("/testfile", (req, res) => {
 });
 
 app.get("/test-lamma", (req, res) => {
-    fetch("http://localhost:11434/api/generate", {
+    fetch("http://127.0.0.1:11434/api/generate", {
         method: "POST",
         body: JSON.stringify({
             "model": "llama2",
@@ -83,18 +84,51 @@ app.get("/speach-to-json", upload.single('file'), async (req, res) => {
             prompt = prompt.replace("%generated_text%", transText)
 
             console.log("transcribed prompt:\n\n", prompt)
-            const lammaAns = await fetch("http://localhost:11434/api/generate", {
-                method: "POST",
-                body: JSON.stringify({
-                    "model": "llama2",
-                    "prompt": prompt,
-                    "format": "json",
-                    "stream": false
-                })
+
+            const requestBodyData = JSON.stringify({
+                "model": "llama2",
+                "prompt": prompt,
+                "format": "json",
+                "stream": false
             })
-            const lammaJson = await lammaAns.json()
-            console.log(lammaJson.response)
-            res.json(JSON.parse(lammaJson.response))
+
+            const options: http.RequestOptions = {
+                hostname: '127.0.0.1',
+                port: 11434,
+                timeout: 1000 * 60 * 60,
+                path: '/api/generate',
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Content-Length': Buffer.byteLength(requestBodyData)
+                }
+            };
+
+            const req = http.request(options, resp => {
+                let data = "";
+
+                // A chunk of data has been recieved.
+                resp.on("data", chunk => {
+                    data += chunk;
+                });
+
+                // The whole response has been received. Print out the result.
+                resp.on("end", () => {
+                    const lammaJson = JSON.parse(data);
+                    console.log(lammaJson.response)
+                    res.json(JSON.parse(lammaJson.response))
+                });
+            })
+                .on("error", err => {
+                    console.log("Error: " + err.message);
+                });
+
+            // Wysłanie danych w ciele żądania
+            req.write(requestBodyData);
+
+            // Zakończenie żądania
+            req.end();
+
         } else {
             res.status(402).send("no file provided")
         }

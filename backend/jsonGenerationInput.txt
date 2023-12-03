@@ -1,5 +1,5 @@
 forget everything up until now.
-having text  in polish from inperfect speach to text AI:
+Having text in polish:
 %generated_text%
 
 Creata a json which is build like:
