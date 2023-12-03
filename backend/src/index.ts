@@ -72,7 +72,7 @@ app.get("/test-lamma", (req, res) => {
         })
 })
 
-app.get("/speach-to-json", upload.single('file'), async (req, res) => {
+app.post("/speach-to-json", upload.single('file'), async (req, res) => {
     const { file } = req
 
     console.log(file)

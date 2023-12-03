@@ -1,21 +1,20 @@
 forget everything up until now.
 Having text in polish:
-%generated_text%
+"%generated_text%"
 
-Creata a json which is build like:
+Create a json which is build like:
 {
-    numOfUsedVeins: number,
     ampacity: number,
-    cablePlace: string (ex. ground, roof, walls),
-    outsideTemperature: number,
-    groundTemperature: number,
+    maxPower: number,
+    veinsUnderLoad: number,
+    temperature: number,
+    placements: string (ex. ground, roof, walls)
 }
 
-If there is no information about any of these properties or if you can't understand something from the text provided, set them to null.
+If there is no information about one of these properties, set it to null.
 Do not add any additional parameters than just specified.
-NumOfUsedVeins is a number of veins inside a cable (plus, minus, ground).
-cablePlace is a place in which cable is put (ussually ground or on the floor).
-outsideTemperature is outside temperature.
-groundTemperature is a temperature inside ground.
-ampacity in polish is "obciążaność".
-At start it is usually the number of veins inside cable (but not always so be caucious).
+ampacity in polish is "obciążalność" or "obciążenie".
+maxPower is maximum active power of the load.
+veinsUnderLoad is a number of wires inside a cable.
+temperature is temperature of the environment around the cable.
+placements is a place in which cable is put (ex. ground or in the wall).

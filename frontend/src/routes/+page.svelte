@@ -3,6 +3,7 @@
 	import calculateIcon from "$lib/icons/calculate.svg";
 	import { Placements, type GoRsp } from "$lib/scripts/goBackend";
 	import DisplayResult from "$lib/components/DisplayResult.svelte";
+	import { json } from "@sveltejs/kit";
 
 	enum AssistantState {
 		ReadyForInput,
@@ -59,8 +60,47 @@
 				});
 
 				chunks = [];
-				downloadHref = URL.createObjectURL(blob);
-				assistantState = AssistantState.ReadyForInput;
+				const formData = new FormData();
+				formData.append("file", blob);
+				fetch("http://127.0.0.1:9999/speach-to-json", {
+					method: "POST",
+					body: formData,
+				})
+					.then((resp) => resp.json())
+					.then((json) => {
+						if (
+							"ampacity" in json &&
+							typeof json.ampacity === "number"
+						) {
+							ampacity = json.ampacity;
+						}
+						if (
+							"maxPower" in json &&
+							typeof json.maxPower === "number"
+						) {
+							maxPower = json.maxPower;
+						}
+						if (
+							"veinsUnderLoad" in json &&
+							typeof json.veinsUnderLoad === "number"
+						) {
+							veinsUnderLoad = json.veinsUnderLoad;
+						}
+						if (
+							"placements" in json &&
+							Object.values(Placements).includes(json.placements)
+						) {
+							placements = json.placements;
+						}
+						if (
+							"temperature" in json &&
+							typeof json.temperature === "number"
+						) {
+							temperature = json.temperature;
+						}
+
+						assistantState = AssistantState.ReadyForInput;
+					});
 			};
 		});
 	}
